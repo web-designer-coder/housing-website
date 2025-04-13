@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeScape - Find Your Dream Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <!-- Logo -->
+        <a href="/" class="logo">
+          <span class="logo-text">Home<span class="logo-accent">Scape</span></span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+          <ul class="nav-links">
+            <li><a href="#home" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#property-search" class="nav-link"><i class="fas fa-building"></i> Properties</a></li>
+            <li><a href="#cities" class="nav-link"><i class="fas fa-map-marker-alt"></i> Cities</a></li>
+            <li><a href="#contact" class="nav-link"><i class="fas fa-phone"></i> Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Right Side Actions -->
+        <div class="navbar-actions">
+          <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+          </button>
+
+          <div class="auth-buttons">
+            <button id="login-button" class="btn btn-text">Login</button>
+            <button id="signup-button" class="btn btn-primary">Sign Up</button>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-button" class="mobile-menu-button">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-content">
+        <ul class="mobile-nav-links">
+          <li><a href="#home" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="#property-search" class="mobile-nav-link"><i class="fas fa-building"></i> Properties</a></li>
+          <li><a href="#cities" class="mobile-nav-link"><i class="fas fa-map-marker-alt"></i> Cities</a></li>
+          <li><a href="#contact" class="mobile-nav-link"><i class="fas fa-phone"></i> Contact</a></li>
+          <li class="mobile-auth-buttons">
+            <button id="mobile-login-button" class="btn btn-outline-full">
+              <i class="fas fa-user"></i> Login
+            </button>
+            <button id="mobile-signup-button" class="btn btn-primary-full">
+              <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+      <div class="hero-overlay"></div>
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">Find Your Dream Home</h1>
+          <p class="hero-subtitle">
+            Discover the perfect property with our AI-powered search and prediction system
+          </p>
+          <a href="#property-search" class="btn btn-hero">Start Searching</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Property Search Section -->
+    <section id="property-predict-form" class="section">
+      <div class="container">
+        <h2 class="section-title">AI Property Prediction</h2>
+        <!-- <form id="ai-form" class="ai-form"> -->
+        <form id="ai-form" class="ai-form" method="POST" action="http://127.0.0.1:8000/predict">
+          
+          <!-- Location -->
+          <div class="form-group">
+            <label for="location">location</label>
+            <input type="text" id="location" name="location" placeholder="Enter city or area">
+          </div>
+    
+          <!-- BHK -->
+          <div class="form-group">
+            <label for="bhk">bhk</label>
+            <select id="bhk" name="bhk">
+              <option value="">Select</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+    
+          <!-- Average Price -->
+          <div class="form-group">
+            <label for="avgPrice">avg_price</label>
+            <input type="number" id="avgPrice" name="avg_price" placeholder="e.g. 100">
+          </div>
+    
+          <!-- Gym Available -->
+          <div class="form-group">
+            <label for="gym">gym</label>
+            <select id="gym" name="gym">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- Swimming Pool -->
+          <div class="form-group">
+            <label for="pool">pool</label>
+            <select id="pool" name="pool">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- Water Availability -->
+          <div class="form-group">
+            <label for="water">water</label>
+            <select id="water" name="water">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- Power Backup -->
+          <div class="form-group">
+            <label for="backup">backup</label>
+            <select id="backup" name="backup">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- Near School -->
+          <div class="form-group">
+            <label for="school">school</label>
+            <select id="school" name="school">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- RERA Registered -->
+          <div class="form-group">
+            <label for="rera">rera</label>
+            <select id="rera" name="rera">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+    
+          <!-- Submit -->
+          <div class="form-group full-width">
+            <button type="submit" class="btn-primary">Predict</button>
+          </div>
+        </form>
+        <div id="search-loading" class="hidden">Loading prediction...</div>
+        <div id="search-results"></div>
+
+        <div id="prediction-modal" class="modal hidden">
+          <div class="modal-content">
+            <span id="close-modal" class="modal-close">&times;</span>
+            <h3>AI Prediction</h3>
+            <p id="prediction-text">Loading...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Mortgage Calculator Section -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Mortgage Calculator</h2>
+        <div class="mortgage-calculator-container">
+          <div class="mortgage-calculator-grid">
+            <!-- Calculator Inputs -->
+            <div class="mortgage-inputs">
+              <h3 class="mortgage-subtitle">Loan Details</h3>
+
+              <!-- Property Value / Loan Amount -->
+              <div class="mortgage-input-group">
+                <div class="mortgage-input-header">
+                  <label class="mortgage-input-label">
+                    <i class="fas fa-rupee-sign"></i> Property Value
+                  </label>
+                  <div class="mortgage-input-value">
+                    <input type="text" id="loan-amount-input" class="mortgage-text-input" value="5,000,000">
+                    <div class="tooltip-container">
+                      <i class="fas fa-question-circle"></i>
+                      <div class="tooltip" id="loan-amount-tooltip">
+                        Enter the total value of the property you want to purchase (1 Lakh to 10 Crore)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="range" id="loan-amount-slider" min="100000" max="100000000" step="100000" value="5000000" class="mortgage-slider">
+                <div class="mortgage-slider-labels">
+                  <span>₹1L</span>
+                  <span>₹5Cr</span>
+                  <span>₹10Cr</span>
+                </div>
+              </div>
+
+              <!-- Down Payment -->
+              <div class="mortgage-input-group">
+                <div class="mortgage-input-header">
+                  <label class="mortgage-input-label">
+                    <i class="fas fa-rupee-sign"></i> Down Payment
+                  </label>
+                  <div class="mortgage-input-value">
+                    <input type="text" id="down-payment-input" class="mortgage-text-input" value="1,000,000">
+                    <div class="tooltip-container">
+                      <i class="fas fa-question-circle"></i>
+                      <div class="tooltip" id="down-payment-tooltip">
+                        The initial payment you make upfront (typically 10-20% of property value)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="range" id="down-payment-slider" min="0" max="4500000" step="100000" value="1000000" class="mortgage-slider">
+                <div class="mortgage-slider-labels">
+                  <span>₹0</span>
+                  <span>₹2.25Cr</span>
+                  <span>₹4.5Cr</span>
+                </div>
+              </div>
+
+              <!-- Interest Rate -->
+              <div class="mortgage-input-group">
+                <div class="mortgage-input-header">
+                  <label class="mortgage-input-label">
+                    <i class="fas fa-percent"></i> Interest Rate
+                  </label>
+                  <div class="mortgage-input-value">
+                    <input type="text" id="interest-rate-input" class="mortgage-text-input" value="8.5">
+                    <span>%</span>
+                    <div class="tooltip-container">
+                      <i class="fas fa-question-circle"></i>
+                      <div class="tooltip" id="interest-rate-tooltip">
+                        Annual interest rate on your home loan (typically 7-12% in India)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="range" id="interest-rate-slider" min="5" max="20" step="0.1" value="8.5" class="mortgage-slider">
+                <div class="mortgage-slider-labels">
+                  <span>5%</span>
+                  <span>12.5%</span>
+                  <span>20%</span>
+                </div>
+              </div>
+
+              <!-- Loan Term -->
+              <div class="mortgage-input-group">
+                <div class="mortgage-input-header">
+                  <label class="mortgage-input-label">
+                    <i class="fas fa-clock"></i> Loan Term
+                  </label>
+                  <div class="mortgage-input-value">
+                    <input type="text" id="loan-term-input" class="mortgage-text-input" value="20">
+                    <span>years</span>
+                    <div class="tooltip-container">
+                      <i class="fas fa-question-circle"></i>
+                      <div class="tooltip" id="loan-term-tooltip">
+                        Duration of your home loan (typically 5-30 years)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="range" id="loan-term-slider" min="1" max="30" step="1" value="20" class="mortgage-slider">
+                <div class="mortgage-slider-labels">
+                  <span>1 yr</span>
+                  <span>15 yrs</span>
+                  <span>30 yrs</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculator Results -->
+            <div class="mortgage-results">
+              <h3 class="mortgage-subtitle">Loan Summary</h3>
+
+              <!-- Principal Amount -->
+              <div class="mortgage-result-card">
+                <p class="mortgage-result-label">Principal Amount</p>
+                <p class="mortgage-result-value" id="principal-amount">₹4,000,000</p>
+                <p class="mortgage-result-detail" id="principal-detail">
+                  Property Value: ₹5,000,000 - Down Payment: ₹1,000,000
+                </p>
+              </div>
+
+              <!-- Monthly Payment -->
+              <div class="mortgage-result-card mortgage-result-primary">
+                <p class="mortgage-result-label">Monthly Payment</p>
+                <p class="mortgage-result-value" id="monthly-payment">₹34,513</p>
+              </div>
+
+              <!-- Total Payment & Interest -->
+              <div class="mortgage-result-grid">
+                <div class="mortgage-result-card">
+                  <p class="mortgage-result-label">Total Payment</p>
+                  <p class="mortgage-result-value" id="total-payment">₹8,283,120</p>
+                </div>
+                <div class="mortgage-result-card">
+                  <p class="mortgage-result-label">Total Interest</p>
+                  <p class="mortgage-result-value" id="total-interest">₹4,283,120</p>
+                </div>
+              </div>
+
+              <!-- Loan Breakdown Chart -->
+              <div class="mortgage-chart-container">
+                <h4 class="mortgage-chart-title">Payment Breakdown</h4>
+                <div class="mortgage-chart">
+                  <div class="mortgage-chart-bar" id="mortgage-chart-bar">
+                    <div class="mortgage-chart-principal" id="mortgage-chart-principal"></div>
+                    <div class="mortgage-chart-interest" id="mortgage-chart-interest"></div>
+                  </div>
+                </div>
+                <div class="mortgage-chart-legend">
+                  <div class="mortgage-chart-legend-item">
+                    <div class="mortgage-chart-legend-color mortgage-chart-legend-principal"></div>
+                    <span>Principal</span>
+                  </div>
+                  <div class="mortgage-chart-legend-item">
+                    <div class="mortgage-chart-legend-color mortgage-chart-legend-interest"></div>
+                    <span>Interest</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Call to Action -->
+              <!-- <button class="btn btn-primary mortgage-cta">
+                <i class="fas fa-calculator"></i> Get Pre-Approved for This Loan
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Property Comparison Tool -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Compare Properties</h2>
+        <div class="property-comparison-container">
+          <!-- Property Selection Area -->
+          <div class="property-selection" id="property-selection">
+            <!-- Will be populated by JavaScript -->
+          </div>
+
+          <!-- Comparison Table - Desktop View -->
+          <div class="comparison-table-container" id="comparison-table-container">
+            <!-- Will be populated by JavaScript -->
+          </div>
+
+          <!-- Comparison Cards - Mobile View -->
+          <div class="comparison-mobile" id="comparison-mobile">
+            <!-- Will be populated by JavaScript -->
+          </div>
+
+          <!-- No Properties Selected Message -->
+          <div class="no-properties-message" id="no-properties-message">
+            <div class="no-properties-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <h3 class="no-properties-title">No Properties Selected</h3>
+            <p class="no-properties-text">Add properties to compare their features side by side</p>
+            <button id="add-properties-btn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Properties
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <!-- <section class="section">
+      <div class="container">
+        <h2 class="section-title">What Our Clients Say</h2>
+        <div class="testimonials-container">
+          <!-- Testimonial Slider -->
+          <!-- <div class="testimonials-slider" id="testimonials-slider"> -->
+            <!-- Will be populated by JavaScript -->
+          <!-- </div> -->
+
+          <!-- Navigation Buttons -->
+          <!-- <div class="testimonials-nav">
+            <button id="testimonial-prev" class="testimonial-nav-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button> -->
+
+            <!-- Dots Indicator -->
+            <!-- <div class="testimonial-dots" id="testimonial-dots">
+              <!-- Will be populated by JavaScript -->
+            <!-- </div> -->
+
+            <!-- <button id="testimonial-next" class="testimonial-nav-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+      <div class="container">
+        <div class="newsletter-content">
+          <h2 class="newsletter-title">Subscribe to Our Newsletter</h2>
+          <p class="newsletter-subtitle">
+            Stay updated with the latest properties, market trends, and exclusive offers
+          </p>
+
+          <div id="newsletter-form-container" class="newsletter-form-container">
+            <form id="newsletter-form" class="newsletter-form">
+              <div class="newsletter-input-wrapper">
+                <i class="fas fa-envelope newsletter-input-icon"></i>
+                <input type="email" id="newsletter-email" placeholder="Your email address" class="newsletter-input">
+              </div>
+              <button type="submit" class="btn btn-newsletter">
+                Subscribe <i class="fas fa-arrow-right"></i>
+              </button>
+            </form>
+            <p id="newsletter-error" class="newsletter-error"></p>
+          </div>
+
+          <div id="newsletter-success" class="newsletter-success hidden">
+            <div class="newsletter-success-title">Thank You!</div>
+            <p class="newsletter-success-message">You've been successfully subscribed to our newsletter.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Company Info -->
+        <div class="footer-company">
+          <h3 class="footer-logo">Home<span class="footer-logo-accent">Scape</span></h3>
+          <p class="footer-description">
+            Finding your perfect home has never been easier. Use our AI-powered platform to discover properties that
+            match your exact requirements.
+          </p>
+          <div class="footer-social">
+            <a href="#" class="footer-social-link" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-links">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-link-list">
+            <li><a href="#home" class="footer-link">Home</a></li>
+            <li><a href="#property-search" class="footer-link">Properties</a></li>
+            <li><a href="#cities" class="footer-link">Cities</a></li>
+            <li><a href="#" class="footer-link">About Us</a></li>
+            <li><a href="#contact" class="footer-link">Contact</a></li>
+            <li><a href="#" class="footer-link">Privacy Policy</a></li>
+            <li><a href="#" class="footer-link">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <!-- Popular Cities -->
+        <div class="footer-cities">
+          <h4 class="footer-heading">Popular Cities</h4>
+          <ul class="footer-link-list">
+            <li><a href="#" class="footer-link">Mumbai</a></li>
+            <li><a href="#" class="footer-link">Delhi</a></li>
+            <li><a href="#" class="footer-link">Bangalore</a></li>
+            <li><a href="#" class="footer-link">Hyderabad</a></li>
+            <li><a href="#" class="footer-link">Chennai</a></li>
+            <li><a href="#" class="footer-link">Kolkata</a></li>
+            <li><a href="#" class="footer-link">Pune</a></li>
+            <li><a href="#" class="footer-link">Ahmedabad</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="footer-contact">
+          <h4 class="footer-heading">Contact Us</h4>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <i class="fas fa-map-marker-alt footer-contact-icon"></i>
+              <span>123 Real Estate Avenue, Mumbai, Maharashtra 400001, India</span>
+            </li>
+            <li class="footer-contact-item">
+              <i class="fas fa-phone footer-contact-icon"></i>
+              <span>+91 98765 43210</span>
+            </li>
+            <li class="footer-contact-item">
+              <i class="fas fa-envelope footer-contact-icon"></i>
+              <span>info@homescape.com</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="footer-divider">
+
+      <!-- Bottom Footer -->
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          &copy; <span id="current-year"></span> HomeScape. All rights reserved.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="#" class="footer-bottom-link">Privacy Policy</a>
+          <a href="#" class="footer-bottom-link">Terms of Service</a>
+          <a href="#" class="footer-bottom-link">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="auth-modal">
+    <div class="auth-modal-content">
+      <!-- Close button -->
+      <button id="auth-close" class="auth-close">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="auth-header">
+        <h2 id="auth-title" class="auth-title">Welcome Back</h2>
+        <p id="auth-subtitle" class="auth-subtitle">Sign in to access your account</p>
+      </div>
+
+      <!-- Form -->
+      <form id="auth-form" class="auth-form">
+        <!-- Name field (signup only) -->
+        <div id="name-field" class="auth-form-group hidden">
+          <label for="name" class="auth-form-label">Full Name</label>
+          <div class="auth-input-wrapper">
+            <i class="fas fa-user auth-input-icon"></i>
+            <input type="text" id="name" name="name" class="auth-input" placeholder="John Doe">
+          </div>
+          <p id="name-error" class="auth-error"></p>
+        </div>
+
+        <!-- Email field -->
+        <div class="auth-form-group">
+          <label for="email" class="auth-form-label">Email Address</label>
+          <div class="auth-input-wrapper">
+            <i class="fas fa-envelope auth-input-icon"></i>
+            <input type="email" id="email" name="email" class="auth-input" placeholder="your@email.com">
+          </div>
+          <p id="email-error" class="auth-error"></p>
+        </div>
+
+        <!-- Password field -->
+        <div class="auth-form-group">
+          <label for="password" class="auth-form-label">Password</label>
+          <div class="auth-input-wrapper">
+            <i class="fas fa-lock auth-input-icon"></i>
+            <input type="password" id="password" name="password" class="auth-input" placeholder="Enter your password">
+            <button type="button" id="toggle-password" class="auth-toggle-password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <p id="password-error" class="auth-error"></p>
+
+          <div id="forgot-password" class="auth-forgot-password">
+            <a href="#" class="auth-link">Forgot password?</a>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
+      </form>
+
+      <!-- Switch between login and signup -->
+      <div class="auth-switch">
+        <p class="auth-switch-text">
+          <span id="auth-switch-text">Don't have an account?</span>
+          <button id="auth-switch-btn" class="auth-switch-btn">Sign up</button>
+        </p>
+      </div>
+
+      <!-- Social login options -->
+      <div class="auth-social">
+        <div class="auth-social-divider">
+          <span class="auth-social-divider-text">Or continue with</span>
+        </div>
+
+        <div class="auth-social-buttons">
+          <button type="button" class="auth-social-btn">
+            <svg class="auth-social-icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              <path fill="none" d="M1 1h22v22H1z" />
+            </svg>
+            Google
+          </button>
+          <button type="button" class="auth-social-btn">
+            <svg class="auth-social-icon" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 2.836c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C17.14 18.163 20 14.418 20 10c0-5.523-4.477-10-10-10z" clip-rule="evenodd" />
+            </svg>
+            GitHub
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Property Selection Modal -->
+  <div id="property-modal" class="property-modal">
+    <div class="property-modal-content">
+      <div class="property-modal-header">
+        <h3 class="property-modal-title">Select Properties to Compare</h3>
+        <button id="property-modal-close" class="property-modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="property-modal-grid" id="property-modal-grid">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
