@@ -1,7 +1,7 @@
 import requests
 
 def get_recommendations(location: str, bhk: int, rera: bool, gym: str, pool: str):
-    url = "https://housing-backend-4lag.onrender.compredict"  # Replace with your actual backend URL
+    url = "https://housing-backend-4lag.onrender.com/predict"  # Replace with your actual backend URL
     payload = {
         "bhk": bhk,
         "location": location,
