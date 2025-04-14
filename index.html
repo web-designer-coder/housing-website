@@ -90,12 +90,7 @@
         <h2 class="section-title">AI Property Prediction</h2>
         <!-- <form id="ai-form" class="ai-form"> -->
         <form id="ai-form" class="ai-form" method="POST" action="http://127.0.0.1:8000/predict">
-          
-          <!-- Location -->
-          <div class="form-group">
-            <label for="location">location</label>
-            <input type="text" id="location" name="location" placeholder="Enter city or area">
-          </div>
+        
     
           <!-- BHK -->
           <div class="form-group">
@@ -109,11 +104,21 @@
               <option value="5">5</option>
             </select>
           </div>
-    
-          <!-- Average Price -->
+
+          <!-- Location -->
           <div class="form-group">
-            <label for="avgPrice">avg_price</label>
-            <input type="number" id="avgPrice" name="avg_price" placeholder="e.g. 100">
+            <label for="location">location</label>
+            <input type="text" id="location" name="location" placeholder="Enter city or area">
+          </div>
+
+          <!-- RERA Registered -->
+          <div class="form-group">
+            <label for="rera">rera</label>
+            <select id="rera" name="rera">
+              <option value="">Select</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
           </div>
     
           <!-- Gym Available -->
@@ -130,46 +135,6 @@
           <div class="form-group">
             <label for="pool">pool</label>
             <select id="pool" name="pool">
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-    
-          <!-- Water Availability -->
-          <div class="form-group">
-            <label for="water">water</label>
-            <select id="water" name="water">
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-    
-          <!-- Power Backup -->
-          <div class="form-group">
-            <label for="backup">backup</label>
-            <select id="backup" name="backup">
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-    
-          <!-- Near School -->
-          <div class="form-group">
-            <label for="school">school</label>
-            <select id="school" name="school">
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-    
-          <!-- RERA Registered -->
-          <div class="form-group">
-            <label for="rera">rera</label>
-            <select id="rera" name="rera">
               <option value="">Select</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
