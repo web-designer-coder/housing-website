@@ -1777,7 +1777,7 @@ document.addEventListener('DOMContentLoaded', function () {
       pool: document.getElementById('pool').value
     };
 
-    fetch('http://127.0.0.1:8000/predict', {
+    fetch('https://housing-backend-4lag.onrender.com/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1789,19 +1789,28 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
       })
       .then(data => {
-        resultContainer.innerHTML = `
-          <div style="
-            background-color: #f0f9ff;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #3b82f6;
-            color: #2563eb;
-            text-align: center;
-            font-weight: 500;
-          ">
-            ✅ AI Prediction: Estimated Demand Score is <strong>${data.prediction.toFixed(2)}</strong>
-          </div>
-        `;
+        if (data.prediction) {
+          const prediction = data.prediction.toFixed(2);  // Ensure 2 decimal places
+
+          // Style the result container for success
+          resultContainer.innerHTML = `
+            <div style="
+              background-color: #f0f9ff;
+              padding: 1rem;
+              border-radius: 0.5rem;
+              border: 1px solid #3b82f6;
+              color: #2563eb;
+              text-align: center;
+              font-weight: 500;
+            ">
+              ✅ <strong>Prediction Successful!</strong><br>
+              The estimated demand score is <strong>${prediction}</strong><br>
+              <span style="font-size: 0.875rem; color: #4ade80;">This is based on the parameters you provided.</span>
+            </div>
+          `;
+        } else {
+          resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
+        }
       })
       .catch(error => {
         console.error('Error:', error);
@@ -1809,4 +1818,3 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
-  
