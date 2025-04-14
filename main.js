@@ -1789,25 +1789,28 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
       })
       .then(data => {
-        if (data.prediction) {
-          const prediction = data.prediction.toFixed(2);  // Ensure 2 decimal places
+        if (data.predictions && Array.isArray(data.predictions)) {
+          // Handle and display predictions as a list of details
+          let resultHTML = '<h3 style="color: #3b82f6;">Top Recommendations:</h3>';
+          resultHTML += '<ul style="list-style-type: none; padding: 0;">';
 
-          // Style the result container for success
-          resultContainer.innerHTML = `
-            <div style="
-              background-color: #f0f9ff;
-              padding: 1rem;
-              border-radius: 0.5rem;
-              border: 1px solid #3b82f6;
-              color: #2563eb;
-              text-align: center;
-              font-weight: 500;
-            ">
-              ✅ <strong>Prediction Successful!</strong><br>
-              The estimated demand score is <strong>${prediction}</strong><br>
-              <span style="font-size: 0.875rem; color: #4ade80;">This is based on the parameters you provided.</span>
-            </div>
-          `;
+          data.predictions.forEach(item => {
+            resultHTML += `
+              <li style="background-color: #f0f9ff; margin-bottom: 1rem; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6;">
+                <strong>🏡 Society Name:</strong> ${item.society_name}<br>
+                <strong>📍 Location:</strong> ${item.location}<br>
+                <strong>🛏 BHK:</strong> ${item.bhk} BHK<br>
+                <strong>💰 Price:</strong> ₹${item.price}<br>
+                <strong>🏋 Gym Available:</strong> ${item.gym_available ? 'Yes' : 'No'}<br>
+                <strong>🏊 Swimming Pool Available:</strong> ${item.pool_available ? 'Yes' : 'No'}<br>
+                <strong>🌟 Star Rating:</strong> ${item.star_rating} ⭐<br>
+                <strong>🏠 Estimated Rent:</strong> ₹${item.estimated_rent} per month
+              </li>
+            `;
+          });
+
+          resultHTML += '</ul>';
+          resultContainer.innerHTML = resultHTML;
         } else {
           resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
         }
@@ -1818,3 +1821,4 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
+
