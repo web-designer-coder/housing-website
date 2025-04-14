@@ -35,11 +35,11 @@ app.add_middleware(
 
 # Define input model using Pydantic (5 parameters only)
 class PredictionRequest(BaseModel):
-    location: str
     bhk: int
+    location: str
+    rera: str
     gym: str
     pool: str
-    rera: str
 
 def encode_location(location: str) -> int:
     location = location.strip().lower()
