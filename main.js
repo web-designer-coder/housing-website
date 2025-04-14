@@ -1774,10 +1774,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const payload = {
       bhk: parseInt(document.getElementById('bhk').value),
       location: document.getElementById('location').value.trim(),
-      rera: document.getElementById('rera').checked,  // Assuming 'rera' is a checkbox
+      rera: document.getElementById('rera').value.trim().toLowerCase() === 'yes',
       gym: document.getElementById('gym').value.trim().toLowerCase(),
       pool: document.getElementById('pool').value.trim().toLowerCase()
     };
+    
 
     // Validate user input
     if (isNaN(payload.bhk) || payload.bhk < 1 || payload.bhk > 3) {
@@ -1824,7 +1825,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <strong>Price:</strong> ₹${property['Price']}<br>
                 <strong>Gym Available:</strong> ${property['Gym Available'] ? 'Yes' : 'No'}<br>
                 <strong>Swimming Pool Available:</strong> ${property['Swimming Pool Available'] ? 'Yes' : 'No'}<br>
-                <strong>Star Rating:</strong> ${property['Star Rating']}⭐<br>
+                <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐<br>
                 <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month
               </li>`;
           });
@@ -1842,6 +1843,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
+
 
 
 
