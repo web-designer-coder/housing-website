@@ -9,7 +9,7 @@ encoder_path = os.path.join(BASE_DIR, 'housing_data', 'label_encoder.pkl')
 label_encoder = joblib.load(encoder_path)
 
 # Correct path to the CSV file (based on your system)
-properties_path = r'C:\Users\aryan\Downloads\CEP_3\api\housing_data\Final_Demand_Prediction_With_Amenities.csv'  # Correct path
+properties_path = os.path.join(BASE_DIR, 'housing_data', 'Final_Demand_Prediction_With_Amenities.csv')
 df_properties = pd.read_csv(properties_path)
 
 def preprocess_input(location: str, bhk: int, rera: bool, gym: str, pool: str):
