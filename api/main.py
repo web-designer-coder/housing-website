@@ -42,10 +42,14 @@ class PredictionRequest(BaseModel):
 @app.post("/predict")
 def predict(req: PredictionRequest):
     try:
+        logging.info(f"Incoming request: {req.dict()}")
+
         bhk = req.bhk
         location = req.location.strip()
         gym = yes_no_to_binary(req.gym)
         pool = yes_no_to_binary(req.pool)
+        rera = req.rera
+        rera = "Registered" if rera else "Not Registered"
 
         # Label encode location
         matched_loc = next((loc for loc in label_encoder.classes_ if loc.lower() == location.lower()), None)
@@ -54,9 +58,10 @@ def predict(req: PredictionRequest):
         encoded_loc = label_encoder.transform([matched_loc])[0]
 
         df = df_properties.copy()
-        df = df[df['Location'] == encoded_loc]
+        df = df[df['Location'].str.lower() == matched_loc.lower()]
         df = df[df['BHK'] == bhk]
         df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
+        df = df[df['RERA Registration'] == rera]
 
         # Relax filters if empty
         if df.empty:
@@ -96,7 +101,10 @@ def predict(req: PredictionRequest):
 
         # Normalize star rating
         min_score, max_score = df['Demand Score'].min(), df['Demand Score'].max()
-        df['Star Rating'] = 5 * (df['Demand Score'] - min_score) / (max_score - min_score) if max_score != min_score else 3
+        if max_score != min_score:
+            df['Star Rating'] = 5 * (df['Demand Score'] - min_score) / (max_score - min_score)
+        else:
+            df['Star Rating'] = 3
 
         df_sorted = df.sort_values(by='Demand Score', ascending=False).head(10)
 
