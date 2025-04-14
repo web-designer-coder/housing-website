@@ -1,7 +1,7 @@
 import requests
 
-def get_property_recommendations(bhk, location, rera, gym, pool):
-    url = "https://<your-render-url>.onrender.com/predict"  # replace with your actual backend URL
+def get_recommendations(location: str, bhk: int, rera: bool, gym: str, pool: str):
+    url = "https://housing-backend-4lag.onrender.compredict"  # Replace with your actual backend URL
     payload = {
         "bhk": bhk,
         "location": location,
