@@ -1,43 +1,28 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
-import logging
-import os
-import numpy as np
 import pandas as pd
-from data import preprocess_input  # Import from data.py
+import numpy as np
+import os
+import logging
+from data import yes_no_to_binary
 
-# Set up basic logging configuration
 logging.basicConfig(level=logging.INFO)
-
-# Load the label encoder and model from pickle files
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(BASE_DIR, 'housing_data', 'housing_demand_model.pkl')  # Path to model
-encoder_path = os.path.join(BASE_DIR, 'housing_data', 'label_encoder.pkl')  # Path to encoder
-properties_path = os.path.join(BASE_DIR, 'housing_data', 'Final_Demand_Prediction_With_Amenities.csv')
-
-# Load model and encoder with error handling
-try:
-    model = joblib.load(model_path)
-    label_encoder = joblib.load(encoder_path)
-except Exception as e:
-    logging.error(f"Error loading model or encoder: {str(e)}")
-    raise HTTPException(status_code=500, detail="Internal Server Error: Could not load model or encoder")
-
-# Load properties data (ensure the file exists and is readable)
-try:
-    df_properties = pd.read_csv(properties_path)
-except FileNotFoundError:
-    logging.error(f"Properties data file not found at {properties_path}")
-    raise HTTPException(status_code=500, detail="Internal Server Error: Properties data file missing")
-except pd.errors.ParserError:
-    logging.error(f"Error parsing CSV file at {properties_path}")
-    raise HTTPException(status_code=500, detail="Internal Server Error: Could not parse properties data")
 
 app = FastAPI()
 
-# Allow CORS for all origins (adjust for production)
+# Load resources
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, 'housing_data', 'housing_demand_model.pkl')
+encoder_path = os.path.join(BASE_DIR, 'housing_data', 'label_encoder.pkl')
+csv_path = os.path.join(BASE_DIR, 'housing_data', 'Final_Demand_Prediction_With_Amenities.csv')
+
+model = joblib.load(model_path)
+label_encoder = joblib.load(encoder_path)
+df_properties = pd.read_csv(csv_path)
+
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -46,6 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Input model
 class PredictionRequest(BaseModel):
     bhk: int
     location: str
@@ -56,101 +42,71 @@ class PredictionRequest(BaseModel):
 @app.post("/predict")
 def predict(req: PredictionRequest):
     try:
-        # Validation of inputs
-        if req.bhk not in [1, 2, 3]:
-            raise HTTPException(status_code=400, detail="BHK value must be 1, 2, or 3")
-        if req.gym not in ['yes', 'no']:
-            raise HTTPException(status_code=400, detail="Gym must be 'yes' or 'no'")
-        if req.pool not in ['yes', 'no']:
-            raise HTTPException(status_code=400, detail="Pool must be 'yes' or 'no'")
+        bhk = req.bhk
+        location = req.location.strip()
+        gym = yes_no_to_binary(req.gym)
+        pool = yes_no_to_binary(req.pool)
 
-        # Preprocess input and handle location encoding
-        user_bhk = req.bhk
-        user_location = req.location.strip().lower()
-        user_gym = req.gym.strip().lower()
-        user_pool = req.pool.strip().lower()
+        # Label encode location
+        matched_loc = next((loc for loc in label_encoder.classes_ if loc.lower() == location.lower()), None)
+        if not matched_loc:
+            return {"error": "Invalid location."}
+        encoded_loc = label_encoder.transform([matched_loc])[0]
 
-        matched_location = next((loc for loc in label_encoder.classes_ if loc.lower() == user_location), None)
-        if matched_location is None:
-            raise HTTPException(status_code=400, detail=f"Location '{user_location}' not found in the available data.")
-        
-        encoded_location = label_encoder.transform([matched_location])[0]
+        df = df_properties.copy()
+        df = df[df['Location'] == encoded_loc]
+        df = df[df['BHK'] == bhk]
+        df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
 
-        # Filter properties based on user input
-        df_filtered = df_properties.copy()
+        # Relax filters if empty
+        if df.empty:
+            df = df_properties[df_properties['BHK'] == bhk]
+        if df.empty:
+            df = df_properties[df_properties['Location'] == encoded_loc]
+        if df.empty:
+            df = df_properties.copy()
 
-        # Apply filters
-        df_filtered = df_filtered[df_filtered['Location'] == encoded_location]
-        df_filtered = df_filtered[df_filtered['BHK'] == user_bhk]
-        gym_val = 1 if user_gym == "yes" else 0
-        pool_val = 1 if user_pool == "yes" else 0
-        df_filtered = df_filtered[
-            (df_filtered['Gym Available'] == gym_val) & 
-            (df_filtered['Swimming Pool Available'] == pool_val)
-        ]
-
-        if df_filtered.empty:
-            df_filtered = df_properties[df_properties['BHK'] == user_bhk]
-        
-        if df_filtered.empty:
-            df_filtered = df_properties.copy()
-
-        # Estimate Rent function
+        # Rent Estimation
         def estimate_rent(row, max_price):
-            rent = 0
-            if row['BHK'] == 1:
-                rent = np.random.randint(7000, 15000)
-            elif row['BHK'] == 2:
-                rent = np.random.randint(13000, 20000)
-            elif row['BHK'] == 3:
-                rent = np.random.randint(20000, 35000)
-            if row['Gym Available'] == 1:
+            rent = {
+                1: np.random.randint(7000, 15000),
+                2: np.random.randint(13000, 25000),
+                3: np.random.randint(20000, 35000)
+            }.get(row['BHK'], 10000)
+            if row['Gym Available']:
                 rent *= 1.05
-            if row['Swimming Pool Available'] == 1:
+            if row['Swimming Pool Available']:
                 rent *= 1.07
-            price_factor = (row['Average Price'] / max_price)
+            price_factor = row['Average Price'] / max_price
             rent = rent * (1 + price_factor * 0.1)
             return int(rent)
 
-        # Calculate demand score
-        def calculate_demand_score(row, max_price, max_rent):
-            score = 0
+        def demand_score(row, max_price, max_rent):
             price_factor = (max_price - row['Average Price']) / max_price
             rent_factor = (max_rent - row['Estimated Rent']) / max_rent
-            score += price_factor * 3 + rent_factor * 2
-            if gym_val == 0 and row['Gym Available'] == 0:
-                score += 1
-            if pool_val == 0 and row['Swimming Pool Available'] == 0:
-                score += 1
-            if row['Gym Available'] == 1:
-                score += 1
-            if row['Swimming Pool Available'] == 1:
-                score += 1
+            score = price_factor * 3 + rent_factor * 2
+            score += 1 if row['Gym Available'] else 0
+            score += 1 if row['Swimming Pool Available'] else 0
             return score
 
-        # Add derived columns for estimated rent and demand score
-        max_price = df_filtered['Average Price'].max()
-        df_filtered['Estimated Rent'] = df_filtered.apply(lambda r: estimate_rent(r, max_price), axis=1)
-        max_rent = df_filtered['Estimated Rent'].max()
-        df_filtered['Demand Score'] = df_filtered.apply(lambda r: calculate_demand_score(r, max_price, max_rent), axis=1)
+        max_price = df['Average Price'].max()
+        df['Estimated Rent'] = df.apply(lambda r: estimate_rent(r, max_price), axis=1)
+        max_rent = df['Estimated Rent'].max()
+        df['Demand Score'] = df.apply(lambda r: demand_score(r, max_price, max_rent), axis=1)
 
-        # Normalize Star Rating
-        min_score = df_filtered['Demand Score'].min()
-        max_score = df_filtered['Demand Score'].max()
-        if max_score != min_score:
-            df_filtered['Star Rating'] = 5 * (df_filtered['Demand Score'] - min_score) / (max_score - min_score)
-        else:
-            df_filtered['Star Rating'] = 3
+        # Normalize star rating
+        min_score, max_score = df['Demand Score'].min(), df['Demand Score'].max()
+        df['Star Rating'] = 5 * (df['Demand Score'] - min_score) / (max_score - min_score) if max_score != min_score else 3
 
-        # Sort and select the top 10 properties
-        df_filtered = df_filtered.sort_values(by='Demand Score', ascending=False).head(10)
+        df_sorted = df.sort_values(by='Demand Score', ascending=False).head(10)
 
-        # Prepare the final result
-        result = df_filtered[['Society Name', 'Location', 'Average Price', 'BHK', 'Gym Available', 'Swimming Pool Available', 'Estimated Rent', 'Star Rating']]
-        result = result.rename(columns={"Average Price": "Price"})
+        result = df_sorted[[
+            'Society Name', 'Location', 'Average Price', 'BHK',
+            'Gym Available', 'Swimming Pool Available', 'Estimated Rent', 'Star Rating'
+        ]].rename(columns={"Average Price": "Price"})
 
         return {"properties": result.to_dict(orient="records")}
 
     except Exception as e:
         logging.error(f"Prediction error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal Server Error: " + str(e))
+        return {"error": "An unexpected error occurred. Please try again."}
