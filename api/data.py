@@ -1,41 +1,39 @@
-import requests
+import joblib
+import pandas as pd
+import numpy as np
+import logging
 
-def get_recommendations(location: str, bhk: int, rera: bool, gym: str, pool: str):
-    url = "https://housing-backend-4lag.onrender.com/predict"  # Replace with your actual backend URL
-    payload = {
-        "bhk": bhk,
-        "location": location,
-        "rera": rera,
-        "gym": gym,
-        "pool": pool
-    }
-
+# Load model and encoder with error handling
+def load_model_and_encoder(model_path, encoder_path):
     try:
-        response = requests.post(url, json=payload)
-        response.raise_for_status()
-        data = response.json()
+        model = joblib.load(model_path)
+        encoder = joblib.load(encoder_path)
+        return model, encoder
+    except Exception as e:
+        logging.error(f"Error loading model or encoder: {str(e)}")
+        raise
 
-        if "error" in data:
-            print("❌ Error:", data["error"])
-            return []
+# Preprocess user input and handle location encoding
+def preprocess_input(location: str, bhk: int, gym: str, pool: str, label_encoder):
+    try:
+        # Check if BHK is valid
+        if bhk not in [1, 2, 3]:
+            raise ValueError("BHK must be 1, 2, or 3")
+        
+        # Validate location
+        matched_location = next((loc for loc in label_encoder.classes_ if loc.lower() == location.lower()), None)
+        if not matched_location:
+            raise ValueError(f"Location '{location}' not found in available data")
+        
+        # Encode location
+        encoded_location = label_encoder.transform([matched_location])[0]
+        
+        # Ensure valid gym and pool inputs
+        gym_val = 1 if gym.lower() == 'yes' else 0
+        pool_val = 1 if pool.lower() == 'yes' else 0
 
-        properties = data.get("properties", [])
-        if not properties:
-            print("❌ No matching properties found. Try different filters.")
-        else:
-            for i, prop in enumerate(properties, 1):
-                print(f"\n🏠 Option {i}:")
-                print(f"📍 Society: {prop['Society Name']}")
-                print(f"🛏️  BHK: {prop['BHK']}")
-                print(f"🏙️  Location: {prop['Location']}")
-                print(f"💰 Price: ₹ {prop['Price']}")
-                print(f"🏋️‍♀️ Gym: {'Yes' if prop['Gym Available'] == 1 else 'No'}")
-                print(f"🏊 Pool: {'Yes' if prop['Swimming Pool Available'] == 1 else 'No'}")
-                print(f"🌟 Star Rating: {round(prop['Star Rating'], 1)} / 5")
-                print(f"🏠 Estimated Rent: ₹ {prop['Estimated Rent']} per month")
+        return encoded_location, bhk, gym_val, pool_val
 
-        return properties
-
-    except requests.RequestException as e:
-        print("❌ Request failed:", str(e))
-        return []
+    except Exception as e:
+        logging.error(f"Preprocessing error: {str(e)}")
+        raise
