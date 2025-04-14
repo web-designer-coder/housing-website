@@ -485,17 +485,23 @@ function initPropertySearch() {
     searchResults.innerHTML = '';
     searchLoading.classList.remove('hidden');
 
-    const formData = new FormData();
-    formData.append("location", location);
-    formData.append("bhk", bhk);
-    formData.append("price", minPrice); // or average if you prefer
-    formData.append("reraApproved", reraApproved);
+    const payload = {
+      bhk: parseInt(bhk),
+      location: location,
+      rera: reraApproved,
+      gym: document.getElementById('gym').value,
+      pool: document.getElementById('pool').value
+    };
+    console.log("Sending payload:", payload);
 
-    // Send data to FastAPI
     fetch("http://127.0.0.1:8000/predict", {
       method: "POST",
-      body: formData
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
     })
+    
       .then(response => response.json())
       .then(data => {
         // Show prediction in popup modal
@@ -1757,6 +1763,15 @@ function initNewsletter() {
   });
 }
 
+function validateBHKFormat(value) {
+  const num = parseInt(value);
+  if (isNaN(num) || num < 1 || num > 5) {
+    throw new Error("Invalid BHK value");
+  }
+  return num;
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('ai-form');
   const resultContainer = document.createElement('div');
@@ -1770,21 +1785,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // Clear previous results and show loading spinner
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
+    let rawBhk = document.getElementById("bhk").value;
+      let formattedBhk = null;
+
+      try {
+        formattedBhk = validateBHKFormat(rawBhk);
+      } catch (e) {
+        resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
+        return;
+      }
+
     // Collect user input values
     const payload = {
-      bhk: parseInt(document.getElementById('bhk').value),
+      bhk: formattedBhk,
       location: document.getElementById('location').value.trim(),
       rera: document.getElementById('rera').value.trim().toLowerCase() === 'yes',
       gym: document.getElementById('gym').value.trim().toLowerCase(),
       pool: document.getElementById('pool').value.trim().toLowerCase()
     };
-    
-
-    // Validate user input
-    if (isNaN(payload.bhk) || payload.bhk < 1 || payload.bhk > 3) {
-      resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1, 2, or 3).</div>`;
-      return;
-    }
 
     if (!['yes', 'no'].includes(payload.gym)) {
       resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'yes' or 'no' for Gym.</div>`;
@@ -1843,7 +1861,3 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
-
-
-
-
