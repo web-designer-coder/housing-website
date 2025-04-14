@@ -14,7 +14,10 @@ df_properties = pd.read_csv(properties_path)
 
 def preprocess_input(location: str, bhk: int, rera: bool, gym: str, pool: str):
     # Encode location using the label encoder
-    loc_encoded = label_encoder.transform([location])[0] if location in label_encoder.classes_ else -1
+    if location not in label_encoder.classes_:
+        return -1, "Unknown location. Please choose from valid options."  # Return error message
+
+    loc_encoded = label_encoder.transform([location])[0]
     
     # Convert RERA flag to binary (1/0)
     rera_val = 1 if rera else 0
@@ -25,14 +28,12 @@ def preprocess_input(location: str, bhk: int, rera: bool, gym: str, pool: str):
     
     # Filter properties based on input parameters
     filtered_properties = df_properties[
-        (df_properties['BHK'] == bhk) &
-        (df_properties['Gym Available'] == gym_val) &
+        (df_properties['BHK'] == bhk) & 
+        (df_properties['Gym Available'] == gym_val) & 
         (df_properties['Swimming Pool Available'] == pool_val)
     ]
     
     # If location is valid, filter properties by location
-    if loc_encoded != -1:
-        filtered_properties = filtered_properties[filtered_properties['Location'] == loc_encoded]
-
-    # Return filtered properties with relevant details (like name, location, price, etc.)
+    filtered_properties = filtered_properties[filtered_properties['Location'] == loc_encoded]
+    
     return filtered_properties[['Society Name', 'Location', 'Price', 'Gym Available', 'Swimming Pool Available', 'Star Rating', 'Estimated Rent']]
