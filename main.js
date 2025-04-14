@@ -1767,7 +1767,7 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Predicting...</div>';
+    resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
     const payload = {
       bhk: parseInt(document.getElementById('bhk').value),
@@ -1789,36 +1789,39 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
       })
       .then(data => {
-        if (data.predictions && Array.isArray(data.predictions)) {
-          // Handle and display predictions as a list of details
-          let resultHTML = '<h3 style="color: #3b82f6;">Top Recommendations:</h3>';
-          resultHTML += '<ul style="list-style-type: none; padding: 0;">';
+        if (data.properties && data.properties.length > 0) {
+          // Show properties list
+          let propertiesHtml = `
+            <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center;">
+              <strong>Matching Properties:</strong>
+            </div>
+            <ul style="list-style-type: none; padding-left: 0;">`;
 
-          data.predictions.forEach(item => {
-            resultHTML += `
-              <li style="background-color: #f0f9ff; margin-bottom: 1rem; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6;">
-                <strong>🏡 Society Name:</strong> ${item.society_name}<br>
-                <strong>📍 Location:</strong> ${item.location}<br>
-                <strong>🛏 BHK:</strong> ${item.bhk} BHK<br>
-                <strong>💰 Price:</strong> ₹${item.price}<br>
-                <strong>🏋 Gym Available:</strong> ${item.gym_available ? 'Yes' : 'No'}<br>
-                <strong>🏊 Swimming Pool Available:</strong> ${item.pool_available ? 'Yes' : 'No'}<br>
-                <strong>🌟 Star Rating:</strong> ${item.star_rating} ⭐<br>
-                <strong>🏠 Estimated Rent:</strong> ₹${item.estimated_rent} per month
-              </li>
-            `;
+          data.properties.forEach(property => {
+            propertiesHtml += `
+              <li style="border-bottom: 1px solid #ccc; padding: 1rem;">
+                <strong>Society Name:</strong> ${property['Society Name']}<br>
+                <strong>Location:</strong> ${property['Location']}<br>
+                <strong>Price:</strong> ₹${property['Price']}<br>
+                <strong>Gym Available:</strong> ${property['Gym Available'] ? 'Yes' : 'No'}<br>
+                <strong>Swimming Pool Available:</strong> ${property['Swimming Pool Available'] ? 'Yes' : 'No'}<br>
+                <strong>Star Rating:</strong> ${property['Star Rating']}⭐<br>
+                <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month
+              </li>`;
           });
 
-          resultHTML += '</ul>';
-          resultContainer.innerHTML = resultHTML;
+          propertiesHtml += '</ul>';
+          resultContainer.innerHTML = propertiesHtml;
+
         } else {
-          resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
+          resultContainer.innerHTML = `<div style="color: red;">❌ No matching properties found. Please try again with different parameters.</div>`;
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again.</div>`;
+        resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
       });
   });
 });
+
 
