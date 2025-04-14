@@ -2,25 +2,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 import logging
 import os
+import numpy as np
+import pandas as pd
 
 # Set up basic logging configuration
 logging.basicConfig(level=logging.INFO)
 
-# Load model and data
+# Load the label encoder and model from pickle files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(BASE_DIR, 'housing_data', 'housing_demand_model.h5')
-csv_path = os.path.join(BASE_DIR, 'housing_data', 'Final_Demand_Prediction_With_Amenities.csv')
+model_path = os.path.join(BASE_DIR, 'housing_data', 'housing_demand_model.pkl')  # Path to model
+encoder_path = os.path.join(BASE_DIR, 'housing_data', 'label_encoder.pkl')  # Path to encoder
+properties_path = r'C:\Users\aryan\Downloads\CEP_3\api\housing_data\Final_Demand_Prediction_With_Amenities.csv'  # Path to CSV
 
 model = joblib.load(model_path)
-data = pd.read_csv(csv_path)
+label_encoder = joblib.load(encoder_path)
 
-# Fit label encoder from training data
-label_encoder = LabelEncoder()
-data['Location'] = label_encoder.fit_transform(data['Location'])
+# Load the properties data (make sure to load it once to avoid loading it repeatedly)
+df_properties = pd.read_csv(properties_path)
 
 app = FastAPI()
 
@@ -37,48 +37,45 @@ app.add_middleware(
 class PredictionRequest(BaseModel):
     bhk: int
     location: str
-    rera: str
+    rera: bool
     gym: str
     pool: str
-
-def encode_location(location: str) -> int:
-    location = location.strip().lower()
-    valid_locations = [loc.lower() for loc in label_encoder.classes_]
-    if location in valid_locations:
-        index = valid_locations.index(location)
-        return label_encoder.transform([label_encoder.classes_[index]])[0]
-    
-    # Log unknown location
-    logging.warning(f"Unknown location received: {location}")
-    return -1  # Unknown location fallback
 
 # POST route for predictions
 @app.post("/predict")
 def predict(req: PredictionRequest):
     try:
-        # Encode the location using the pre-trained label encoder
-        encoded_location = encode_location(req.location)
-        if encoded_location == -1:
-            return {"error": "Unknown location. Please choose from valid options."}
-
-        # Convert Yes/No to binary for gym, pool, and rera
-        def to_binary(value: str):
-            return 1 if value.lower() == 'yes' else 0
-
-        # Create features vector based on the selected parameters
-        features = [
-            req.bhk,                     # BHK
-            encoded_location,            # Location (encoded)
-            to_binary(req.gym),          # Gym (Yes/No -> 1/0)
-            to_binary(req.pool),         # Pool (Yes/No -> 1/0)
-            to_binary(req.rera)          # RERA (Yes/No -> 1/0)
+        # Preprocess input using the function from data.py
+        loc_encoded = label_encoder.transform([req.location])[0] if req.location in label_encoder.classes_ else -1
+        
+        # Convert RERA flag to binary (1/0)
+        rera_val = 1 if req.rera else 0
+        
+        # Convert Gym and Pool to binary (1/0)
+        gym_val = 1 if req.gym.lower() == "yes" else 0
+        pool_val = 1 if req.pool.lower() == "yes" else 0
+        
+        # Filter properties based on input parameters
+        filtered_properties = df_properties[
+            (df_properties['BHK'] == req.bhk) &
+            (df_properties['Gym Available'] == gym_val) &
+            (df_properties['Swimming Pool Available'] == pool_val)
         ]
+        
+        # If location is valid, filter properties by location
+        if loc_encoded != -1:
+            filtered_properties = filtered_properties[filtered_properties['Location'] == loc_encoded]
+        
+        # Return filtered properties with relevant details (like name, location, price, etc.)
+        result = filtered_properties[['Society Name', 'Location', 'Price', 'Gym Available', 'Swimming Pool Available', 'Star Rating', 'Estimated Rent']]
 
-        # Make prediction using the model
-        prediction = model.predict([features])
-        logging.info(f"Prediction successful for location: {req.location}, Score: {float(prediction[0])}")
+        # Check if any properties were found
+        if result.empty:
+            return {"error": "No matching properties found."}
 
-        return {"prediction": float(prediction[0])}
-
+        # Return results as a list of dictionaries for easy frontend processing
+        return {"properties": result.to_dict(orient="records")}
+    
     except Exception as e:
+        logging.error(f"Error: {str(e)}")
         return {"error": str(e)}
