@@ -1767,16 +1767,35 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
+    // Clear previous results and show loading spinner
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
+    // Collect user input values
     const payload = {
       bhk: parseInt(document.getElementById('bhk').value),
-      location: document.getElementById('location').value,
-      rera: document.getElementById('rera').value,
-      gym: document.getElementById('gym').value,
-      pool: document.getElementById('pool').value
+      location: document.getElementById('location').value.trim(),
+      rera: document.getElementById('rera').checked,  // Assuming 'rera' is a checkbox
+      gym: document.getElementById('gym').value.trim().toLowerCase(),
+      pool: document.getElementById('pool').value.trim().toLowerCase()
     };
 
+    // Validate user input
+    if (isNaN(payload.bhk) || payload.bhk < 1 || payload.bhk > 3) {
+      resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1, 2, or 3).</div>`;
+      return;
+    }
+
+    if (!['yes', 'no'].includes(payload.gym)) {
+      resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'yes' or 'no' for Gym.</div>`;
+      return;
+    }
+
+    if (!['yes', 'no'].includes(payload.pool)) {
+      resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'yes' or 'no' for Pool.</div>`;
+      return;
+    }
+
+    // Send POST request to the backend
     fetch('https://housing-backend-4lag.onrender.com/predict', {
       method: 'POST',
       headers: {
@@ -1823,5 +1842,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
+
 
 
