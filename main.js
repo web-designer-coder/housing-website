@@ -1769,15 +1769,6 @@ function initNewsletter() {
   });
 }
 
-function validateBHKFormat(value) {
-  const bhkInt = parseInt(value);
-  if (!Number.isInteger(bhkInt) || bhkInt < 1 || bhkInt > 5) {
-    throw new Error('Invalid BHK format');
-  }
-  return bhkInt;
-}
-
-
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('ai-form');
   const resultContainer = document.createElement('div');
@@ -1792,16 +1783,15 @@ document.addEventListener('DOMContentLoaded', function () {
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
     let rawBhk = document.getElementById("bhk").value;
-      let formattedBhk = null;
+    let formattedBhk = null;
 
-      try {
-        formattedBhk = validateBHKFormat(rawBhk);
-      } catch (e) {
-        resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
-        return;
-      }
+    try {
+      formattedBhk = validateBHKFormat(rawBhk);
+    } catch (e) {
+      resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
+      return;
+    }
 
-    // Collect user input values
     const payload = {
       bhk: formattedBhk,
       location: document.getElementById('location').value.trim(),
@@ -1820,8 +1810,8 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // Send POST request to the backend
-    ('https://housing-backend-4lag.onrender.com/predict', {
+    // ✅ FIXED fetch() call here:
+    fetch('https://housing-backend-4lag.onrender.com/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1834,7 +1824,6 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .then(data => {
         if (data.properties && data.properties.length > 0) {
-          // Show properties list
           let propertiesHtml = `
             <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center;">
               <strong>Matching Properties:</strong>
@@ -1843,14 +1832,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
           data.properties.forEach(property => {
             propertiesHtml += `
-              <li style="border-bottom: 1px solid #ccc; padding: 1rem;">
+              <li>
                 <strong>Society Name:</strong> ${property['Society Name']}<br>
                 <strong>Location:</strong> ${property['Location']}<br>
                 <strong>Price:</strong> ₹${property['Price']}<br>
+                <strong>BHK:</strong> ${property['BHK']}<br>
                 <strong>Gym Available:</strong> ${property['Gym Available'] ? 'Yes' : 'No'}<br>
                 <strong>Swimming Pool Available:</strong> ${property['Swimming Pool Available'] ? 'Yes' : 'No'}<br>
-                <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐<br>
-                <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month
+                <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month<br>
+                <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐
               </li>`;
           });
 
@@ -1867,4 +1857,12 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
-fetch
+
+// Add this function at the top of your JS if not already included:
+function validateBHKFormat(value) {
+  const bhkInt = parseInt(value);
+  if (!Number.isInteger(bhkInt) || bhkInt < 1 || bhkInt > 5) {
+    throw new Error('Invalid BHK format');
+  }
+  return bhkInt;
+}
