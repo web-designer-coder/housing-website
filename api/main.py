@@ -44,33 +44,48 @@ def predict(req: PredictionRequest):
     try:
         logging.info(f"Incoming request: {req.dict()}")
 
-        bhk = req.bhk
-        location = req.location.strip()
+        # Get input parameters
+        bhk = f"{req.bhk} BHK"
+        location = req.location.strip().lower()
         gym = yes_no_to_binary(req.gym)
         pool = yes_no_to_binary(req.pool)
-        rera = req.rera
-        rera = "Registered" if rera else "Not Registered"
+        rera = "Registered" if req.rera else "Not Registered"
 
-        matched_loc = next((loc for loc in label_encoder.classes_ if loc.lower() == location.lower()), None)
-        if not matched_loc:
-            return {"error": "Invalid location."}
-        # No need to use encoded_loc anymore
-
+        # Start with a copy of the properties DataFrame
         df = df_properties.copy()
-        df = df[df['Location'].str.lower() == matched_loc.lower()]
-        df = df[df['BHK'] == bhk]
-        df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
-        df = df[df['RERA Registration Status'].str.lower() == rera.lower()]
 
-        # Relax filters if empty
+        # Apply initial filters based on the input
+        df = df[df['Location'].str.lower() == location]
+        df = df[df['BHK'] == bhk]
+        df = df[df['Gym Available'] == gym]
+        df = df[df['Swimming Pool Available'] == pool]
+        df = df[df['REAR Registration Status'] == rera]
+
+        # If no matches are found, relax the filters
         if df.empty:
-            df = df_properties[df_properties['BHK'] == bhk]
-        if df.empty:
-            df = df_properties[df_properties['Location'].str.lower() == matched_loc.lower()]
+            logging.info("No properties found with exact match, relaxing filters...")
+
+            # Relax by BHK
+            if df.empty:
+                df = df_properties[df_properties['BHK'] == bhk]
+            # Relax by Location
+            if df.empty:
+                df = df_properties[df_properties['Location'].str.lower() == location]
+            # Relax by Gym
+            if df.empty:
+                df = df_properties[df_properties['Gym Available'] == gym]
+            # Relax by Pool
+            if df.empty:
+                df = df_properties[df_properties['Swimming Pool Available'] == pool]
+            # Relax by Rera
+            if df.empty:
+                df = df_properties[df_properties['REAR Registration Status'] == rera]
+
+        # If still no data found, return all properties
         if df.empty:
             df = df_properties.copy()
 
-        # Rent Estimation
+        # Rent Estimation function
         def estimate_rent(row, max_price):
             rent = {
                 1: np.random.randint(7000, 15000),
@@ -85,6 +100,7 @@ def predict(req: PredictionRequest):
             rent = rent * (1 + price_factor * 0.1)
             return int(rent)
 
+        # Demand Score Calculation function
         def demand_score(row, max_price, max_rent):
             price_factor = (max_price - row['Average Price']) / max_price
             rent_factor = (max_rent - row['Estimated Rent']) / max_rent
@@ -93,20 +109,29 @@ def predict(req: PredictionRequest):
             score += 1 if row['Swimming Pool Available'] else 0
             return score
 
+        # Calculate the max price
         max_price = df['Average Price'].max()
+
+        # Calculate the Estimated Rent for each property
         df['Estimated Rent'] = df.apply(lambda r: estimate_rent(r, max_price), axis=1)
+        
+        # Calculate the max rent
         max_rent = df['Estimated Rent'].max()
+
+        # Calculate the Demand Score for each property
         df['Demand Score'] = df.apply(lambda r: demand_score(r, max_price, max_rent), axis=1)
 
-        # Normalize star rating
+        # Normalize star rating based on Demand Score
         min_score, max_score = df['Demand Score'].min(), df['Demand Score'].max()
         if max_score != min_score:
             df['Star Rating'] = 5 * (df['Demand Score'] - min_score) / (max_score - min_score)
         else:
             df['Star Rating'] = 3
 
+        # Sort by Demand Score to get top properties
         df_sorted = df.sort_values(by='Demand Score', ascending=False).head(10)
 
+        # Final result to return
         result = df_sorted[[ 
             'Society Name', 'Location', 'Average Price', 'BHK',
             'Gym Available', 'Swimming Pool Available', 'Estimated Rent', 'Star Rating'
