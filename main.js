@@ -505,8 +505,14 @@ function initPropertySearch() {
       .then(response => response.json())
       .then(data => {
         // Show prediction in popup modal
-        document.getElementById('prediction-text').innerText =
-        `Based on your inputs, the estimated demand score is ${data.prediction.toFixed(2)}`;
+        if (data.properties && data.properties.length > 0) {
+          document.getElementById('prediction-text').innerText =
+            `Top ${data.properties.length} properties matched your preferences!`;
+        } else {
+          document.getElementById('prediction-text').innerText =
+            `No properties matched your criteria.`;
+        }
+        
 
         document.getElementById('prediction-modal').classList.remove('hidden');
 
@@ -1764,11 +1770,11 @@ function initNewsletter() {
 }
 
 function validateBHKFormat(value) {
-  const num = parseInt(value);
-  if (isNaN(num) || num < 1 || num > 5) {
-    throw new Error("Invalid BHK value");
+  const bhkInt = parseInt(value);
+  if (!Number.isInteger(bhkInt) || bhkInt < 1 || bhkInt > 5) {
+    throw new Error('Invalid BHK format');
   }
-  return num;
+  return bhkInt;
 }
 
 
@@ -1815,7 +1821,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Send POST request to the backend
-    fetch('https://housing-backend-4lag.onrender.com/predict', {
+    ('https://housing-backend-4lag.onrender.com/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1861,3 +1867,4 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
+fetch
