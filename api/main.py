@@ -61,14 +61,14 @@ def predict(req: PredictionRequest):
         df = df[df['Location'].str.lower() == matched_loc.lower()]
         df = df[df['BHK'] == bhk]
         df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
-        df = df[df['RERA Registration'].str.lower() == rera.lower()]
+        df = df[df['Rera Registration Status'].str.lower() == rera.lower()]
 
 
         # Relax filters if empty
         if df.empty:
             df = df_properties[df_properties['BHK'] == bhk]
         if df.empty:
-            df = df_properties[df_properties['Location'] == encoded_loc]
+            df = df_properties[df_properties['Location'].str.lower() == matched_loc.lower()]
         if df.empty:
             df = df_properties.copy()
 
@@ -117,5 +117,5 @@ def predict(req: PredictionRequest):
         return {"properties": result.to_dict(orient="records")}
 
     except Exception as e:
-        logging.error(f"Prediction error: {str(e)}")
-        return {"error": "An unexpected error occurred. Please try again."}
+        logging.exception("Prediction error")  # shows full traceback in logs
+        return {"error": str(e)}  # helpful for debugging
