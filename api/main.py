@@ -56,42 +56,41 @@ def predict(req: PredictionRequest):
 
         # Apply initial filters based on the input
         df = df[df['Location'].str.lower() == location]
+
+        # Safely filter by RERA column
+        if 'RERA Registration Status' in df.columns:
+            df = df[df['RERA Registration Status'] == rera]
+        else:
+            logging.warning("RERA Registration Status column not found in the dataset")
+
         df = df[df['BHK'] == bhk]
         df = df[df['Gym Available'] == gym]
         df = df[df['Swimming Pool Available'] == pool]
-        df = df[df['REAR Registration Status'] == rera]
 
         # If no matches are found, relax the filters
         if df.empty:
             logging.info("No properties found with exact match, relaxing filters...")
 
-            # Relax by BHK
             if df.empty:
                 df = df_properties[df_properties['BHK'] == bhk]
-            # Relax by Location
             if df.empty:
                 df = df_properties[df_properties['Location'].str.lower() == location]
-            # Relax by Gym
             if df.empty:
                 df = df_properties[df_properties['Gym Available'] == gym]
-            # Relax by Pool
             if df.empty:
                 df = df_properties[df_properties['Swimming Pool Available'] == pool]
-            # Relax by Rera
-            if df.empty:
-                df = df_properties[df_properties['REAR Registration Status'] == rera]
+            if df.empty and 'RERA Registration Status' in df_properties.columns:
+                df = df_properties[df_properties['RERA Registration Status'] == rera]
 
-        # If still no data found, return all properties
         if df.empty:
             df = df_properties.copy()
 
-        # Rent Estimation function
         def estimate_rent(row, max_price):
             rent = {
                 1: np.random.randint(7000, 15000),
                 2: np.random.randint(13000, 25000),
                 3: np.random.randint(20000, 35000)
-            }.get(row['BHK'], 10000)
+            }.get(int(row['BHK'].split()[0]), 10000)
             if row['Gym Available']:
                 rent *= 1.05
             if row['Swimming Pool Available']:
@@ -100,7 +99,6 @@ def predict(req: PredictionRequest):
             rent = rent * (1 + price_factor * 0.1)
             return int(rent)
 
-        # Demand Score Calculation function
         def demand_score(row, max_price, max_rent):
             price_factor = (max_price - row['Average Price']) / max_price
             rent_factor = (max_rent - row['Estimated Rent']) / max_rent
@@ -109,29 +107,19 @@ def predict(req: PredictionRequest):
             score += 1 if row['Swimming Pool Available'] else 0
             return score
 
-        # Calculate the max price
         max_price = df['Average Price'].max()
-
-        # Calculate the Estimated Rent for each property
         df['Estimated Rent'] = df.apply(lambda r: estimate_rent(r, max_price), axis=1)
-        
-        # Calculate the max rent
         max_rent = df['Estimated Rent'].max()
-
-        # Calculate the Demand Score for each property
         df['Demand Score'] = df.apply(lambda r: demand_score(r, max_price, max_rent), axis=1)
 
-        # Normalize star rating based on Demand Score
         min_score, max_score = df['Demand Score'].min(), df['Demand Score'].max()
         if max_score != min_score:
             df['Star Rating'] = 5 * (df['Demand Score'] - min_score) / (max_score - min_score)
         else:
             df['Star Rating'] = 3
 
-        # Sort by Demand Score to get top properties
         df_sorted = df.sort_values(by='Demand Score', ascending=False).head(10)
 
-        # Final result to return
         result = df_sorted[[ 
             'Society Name', 'Location', 'Average Price', 'BHK',
             'Gym Available', 'Swimming Pool Available', 'Estimated Rent', 'Star Rating'
