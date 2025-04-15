@@ -61,7 +61,8 @@ def predict(req: PredictionRequest):
         df = df[df['Location'].str.lower() == matched_loc.lower()]
         df = df[df['BHK'] == bhk]
         df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
-        df = df[df['RERA Registration'] == rera]
+        df = df[df['RERA Registration'].str.lower() == rera.lower()]
+
 
         # Relax filters if empty
         if df.empty:
