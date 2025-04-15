@@ -1416,14 +1416,18 @@ document.addEventListener('DOMContentLoaded', function () {
             <ul style="list-style-type: none; padding-left: 0;">`;
 
           data.properties.forEach(property => {
+            // Ensure gym and pool availability display based on actual data returned
+            const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
+            const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
+
             propertiesHtml += `
               <li>
                 <strong>Society Name:</strong> ${property['Society Name']}<br>
                 <strong>Location:</strong> ${property['Location']}<br>
                 <strong>Price:</strong> ₹${property['Price']}<br>
                 <strong>BHK:</strong> ${property['BHK']}<br>
-                <strong>Gym Available:</strong> ${property['Gym Available'] ? 'Yes' : 'No'}<br>
-                <strong>Swimming Pool Available:</strong> ${property['Swimming Pool Available'] ? 'Yes' : 'No'}<br>
+                <strong>Gym Available:</strong> ${gymAvailable}<br>
+                <strong>Swimming Pool Available:</strong> ${poolAvailable}<br>
                 <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month<br>
                 <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐
               </li>`;
