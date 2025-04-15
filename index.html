@@ -88,14 +88,13 @@
     <section id="property-predict-form" class="section">
       <div class="container">
         <h2 class="section-title">AI Property Prediction</h2>
-        <!-- <form id="ai-form" class="ai-form"> -->
-          <form id="ai-form" class="ai-form">        
-    
+        <form id="ai-form" class="ai-form">
+        
           <!-- BHK -->
           <div class="form-group">
-            <label for="bhk">bhk</label>
-            <select id="bhk" name="bhk">
-              <option value="">Select</option>
+            <label for="bhk">BHK</label>
+            <select id="bhk" name="bhk" required>
+              <option value="" disabled selected>Select</option>
               <option value="1">1BHK</option>
               <option value="2">2BHK</option>
               <option value="3">3BHK</option>
@@ -103,18 +102,18 @@
               <option value="5">5BHK</option>
             </select>
           </div>
-
+    
           <!-- Location -->
           <div class="form-group">
-            <label for="location">location</label>
-            <input type="text" id="location" name="location" placeholder="Enter city or area">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" placeholder="Enter city or area" required>
           </div>
-
+    
           <!-- RERA Registered -->
           <div class="form-group">
-            <label for="rera">rera</label>
-            <select id="rera" name="rera">
-              <option value="">Select</option>
+            <label for="rera">RERA Registered</label>
+            <select id="rera" name="rera" required>
+              <option value="" disabled selected>Select</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
@@ -122,9 +121,9 @@
     
           <!-- Gym Available -->
           <div class="form-group">
-            <label for="gym">gym</label>
-            <select id="gym" name="gym">
-              <option value="">Select</option>
+            <label for="gym">Gym Available</label>
+            <select id="gym" name="gym" required>
+              <option value="" disabled selected>Select</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
@@ -132,9 +131,9 @@
     
           <!-- Swimming Pool -->
           <div class="form-group">
-            <label for="pool">pool</label>
-            <select id="pool" name="pool">
-              <option value="">Select</option>
+            <label for="pool">Swimming Pool</label>
+            <select id="pool" name="pool" required>
+              <option value="" disabled selected>Select</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
@@ -145,9 +144,12 @@
             <button type="submit" class="btn-primary">Predict</button>
           </div>
         </form>
+    
+        <!-- Spinner and Results -->
         <div id="search-loading" class="hidden">Loading prediction...</div>
         <div id="search-results"></div>
-
+    
+        <!-- Modal -->
         <div id="prediction-modal" class="modal hidden">
           <div class="modal-content">
             <span id="close-modal" class="modal-close">&times;</span>
@@ -155,9 +157,9 @@
             <p id="prediction-text">Loading...</p>
           </div>
         </div>
-
       </div>
     </section>
+    
 
     <!-- Mortgage Calculator Section -->
     <section class="section">
