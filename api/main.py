@@ -51,18 +51,16 @@ def predict(req: PredictionRequest):
         rera = req.rera
         rera = "Registered" if rera else "Not Registered"
 
-        # Label encode location
         matched_loc = next((loc for loc in label_encoder.classes_ if loc.lower() == location.lower()), None)
         if not matched_loc:
             return {"error": "Invalid location."}
-        encoded_loc = label_encoder.transform([matched_loc])[0]
+        # No need to use encoded_loc anymore
 
         df = df_properties.copy()
         df = df[df['Location'].str.lower() == matched_loc.lower()]
         df = df[df['BHK'] == bhk]
         df = df[(df['Gym Available'] == gym) & (df['Swimming Pool Available'] == pool)]
-        df = df[df['Rera Registration Status'].str.lower() == rera.lower()]
-
+        df = df[df['RERA Registration Status'].str.lower() == rera.lower()]
 
         # Relax filters if empty
         if df.empty:
@@ -109,7 +107,7 @@ def predict(req: PredictionRequest):
 
         df_sorted = df.sort_values(by='Demand Score', ascending=False).head(10)
 
-        result = df_sorted[[
+        result = df_sorted[[ 
             'Society Name', 'Location', 'Average Price', 'BHK',
             'Gym Available', 'Swimming Pool Available', 'Estimated Rent', 'Star Rating'
         ]].rename(columns={"Average Price": "Price"})
@@ -117,5 +115,5 @@ def predict(req: PredictionRequest):
         return {"properties": result.to_dict(orient="records")}
 
     except Exception as e:
-        logging.exception("Prediction error")  # shows full traceback in logs
-        return {"error": str(e)}  # helpful for debugging
+        logging.exception("Prediction error")
+        return {"error": str(e)}
