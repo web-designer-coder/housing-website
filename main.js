@@ -1356,6 +1356,97 @@ function initNewsletter() {
   });
 }
 
+// document.addEventListener('DOMContentLoaded', function () {
+//   const form = document.getElementById('ai-form');
+//   const resultContainer = document.createElement('div');
+//   resultContainer.id = 'ai-prediction-result';
+//   resultContainer.style.marginTop = '1.5rem';
+//   form.appendChild(resultContainer);
+
+//   form.addEventListener('submit', function (e) {
+//     e.preventDefault();
+
+//     // Clear previous results and show loading spinner
+//     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
+
+//     const rawBhk = document.getElementById("bhk").value;  // Get the selected BHK value (e.g., "1BHK", "2BHK")
+//     const bhkValue = parseInt(rawBhk);  // Extract the integer value directly
+
+//     if (isNaN(bhkValue) || bhkValue < 1 || bhkValue > 5) {
+//       resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
+//       return;
+//     }
+
+//     const payload = {
+//       bhk: bhkValue,  // Directly use the integer value
+//       location: document.getElementById("location").value.trim(),
+//       rera: document.getElementById("rera").value === "Yes",  // returns true/false
+//       gym: document.getElementById("gym").value,  // "Yes" or "No"
+//       pool: document.getElementById("pool").value  // "Yes" or "No"
+//     };
+
+//     if (!["Yes", "No"].includes(payload.gym)) {
+//       resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'Yes' or 'No' for Gym.</div>`;
+//       return;
+//     }
+
+//     if (!["Yes", "No"].includes(payload.pool)) {
+//       resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'Yes' or 'No' for Pool.</div>`;
+//       return;
+//     }
+
+//     // ✅ Fixed fetch() call here:
+//     fetch("https://housing-backend-4lag.onrender.com/predict", {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify(payload)
+//     })
+//       .then(response => {
+//         if (!response.ok) throw new Error('Network response was not ok');
+//         return response.json();
+//       })
+//       .then(data => {
+//         if (data.properties && data.properties.length > 0) {
+//           let propertiesHtml = `
+//             <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center;">
+//               <strong>Matching Properties:</strong>
+//             </div>
+//             <ul style="list-style-type: none; padding-left: 0;">`;
+
+//           data.properties.forEach(property => {
+//             // Ensure gym and pool availability display based on actual data returned
+//             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
+//             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
+
+//             propertiesHtml += `
+//               <li>
+//                 <strong>Society Name:</strong> ${property['Society Name']}<br>
+//                 <strong>Location:</strong> ${property['Location']}<br>
+//                 <strong>Price:</strong> ₹${property['Price']}<br>
+//                 <strong>BHK:</strong> ${property['BHK']}<br>
+//                 <strong>Gym Available:</strong> ${gymAvailable}<br>
+//                 <strong>Swimming Pool Available:</strong> ${poolAvailable}<br>
+//                 <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month<br>
+//                 <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐
+//               </li>`;
+//           });
+
+//           propertiesHtml += '</ul>';
+//           resultContainer.innerHTML = propertiesHtml;
+
+//         } else {
+//           resultContainer.innerHTML = `<div style="color: red;">❌ No matching properties found. Please try again with different parameters.</div>`;
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error:', error);
+//         resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
+//       });
+//   });
+// });
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('ai-form');
   const resultContainer = document.createElement('div');
@@ -1369,8 +1460,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Clear previous results and show loading spinner
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
-    const rawBhk = document.getElementById("bhk").value;  // Get the selected BHK value (e.g., "1BHK", "2BHK")
-    const bhkValue = parseInt(rawBhk);  // Extract the integer value directly
+    const rawBhk = document.getElementById("bhk").value;
+    const bhkValue = parseInt(rawBhk);
 
     if (isNaN(bhkValue) || bhkValue < 1 || bhkValue > 5) {
       resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
@@ -1378,11 +1469,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const payload = {
-      bhk: bhkValue,  // Directly use the integer value
+      bhk: bhkValue,
       location: document.getElementById("location").value.trim(),
-      rera: document.getElementById("rera").value === "Yes",  // returns true/false
-      gym: document.getElementById("gym").value,  // "Yes" or "No"
-      pool: document.getElementById("pool").value  // "Yes" or "No"
+      rera: document.getElementById("rera").value === "Yes",
+      gym: document.getElementById("gym").value,
+      pool: document.getElementById("pool").value
     };
 
     if (!["Yes", "No"].includes(payload.gym)) {
@@ -1395,7 +1486,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // ✅ Fixed fetch() call here:
     fetch("https://housing-backend-4lag.onrender.com/predict", {
       method: 'POST',
       headers: {
@@ -1410,30 +1500,45 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(data => {
         if (data.properties && data.properties.length > 0) {
           let propertiesHtml = `
-            <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center;">
+            <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; margin-bottom: 1rem;">
               <strong>Matching Properties:</strong>
             </div>
-            <ul style="list-style-type: none; padding-left: 0;">`;
+            <div style="
+              display: flex;
+              flex-wrap: wrap;
+              gap: 1.5rem;
+              justify-content: center;
+            ">`;
 
           data.properties.forEach(property => {
-            // Ensure gym and pool availability display based on actual data returned
             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
 
             propertiesHtml += `
-              <li>
-                <strong>Society Name:</strong> ${property['Society Name']}<br>
-                <strong>Location:</strong> ${property['Location']}<br>
-                <strong>Price:</strong> ₹${property['Price']}<br>
-                <strong>BHK:</strong> ${property['BHK']}<br>
-                <strong>Gym Available:</strong> ${gymAvailable}<br>
-                <strong>Swimming Pool Available:</strong> ${poolAvailable}<br>
-                <strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} per month<br>
-                <strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)}⭐
-              </li>`;
+              <div style="
+                background-color: #1e293b;
+                color: #f1f5f9;
+                border: 1px solid #334155;
+                border-radius: 1rem;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                padding: 1.25rem;
+                width: 300px;
+                transition: transform 0.2s ease;
+              " onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                <h3 style="color: #3b82f6; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">
+                  ${property['Society Name']}
+                </h3>
+                <p><strong>Location:</strong> ${property['Location']}</p>
+                <p><strong>Price:</strong> ₹${property['Price']}</p>
+                <p><strong>BHK:</strong> ${property['BHK']} BHK</p>
+                <p><strong>Gym Available:</strong> ${gymAvailable}</p>
+                <p><strong>Swimming Pool Available:</strong> ${poolAvailable}</p>
+                <p><strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} / month</p>
+                <p><strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)} ⭐</p>
+              </div>`;
           });
 
-          propertiesHtml += '</ul>';
+          propertiesHtml += '</div>';
           resultContainer.innerHTML = propertiesHtml;
 
         } else {
