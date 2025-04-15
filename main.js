@@ -1357,6 +1357,7 @@ function initNewsletter() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // ---------- Property Prediction Form ----------
   const form = document.getElementById('ai-form');
   const resultContainer = document.createElement('div');
   resultContainer.id = 'ai-prediction-result';
@@ -1366,7 +1367,6 @@ document.addEventListener('DOMContentLoaded', function () {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // Clear previous results and show loading spinner
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
 
     const rawBhk = document.getElementById("bhk").value;
@@ -1409,45 +1409,31 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(data => {
         if (data.properties && data.properties.length > 0) {
           let propertiesHtml = `
-            <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; margin-bottom: 1rem;">
-              <strong>Matching Properties:</strong>
+            <div style="background-color: var(--header-bg, #f0f9ff); padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; font-weight: bold;">
+              Matching Properties:
             </div>
-            <div style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: 1.5rem;
-              justify-content: center;
-            ">`;
+            <div class="card-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">`;
 
           data.properties.forEach(property => {
             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
 
             propertiesHtml += `
-              <div style="
-                background-color: #1e293b;
-                color: #f1f5f9;
-                border: 1px solid #334155;
-                border-radius: 1rem;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                padding: 1.25rem;
-                width: 300px;
-                transition: transform 0.2s ease;
-              " onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                <h3 style="color: #3b82f6; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">
-                  ${property['Society Name']}
-                </h3>
-                <p><strong>Location:</strong> ${property['Location']}</p>
-                <p><strong>Price:</strong> ₹${property['Price']}</p>
+              <div class="property-card" style="flex: 1 1 calc(33.333% - 1rem);">
+                <h3>${property['Society Name']}</h3>
+                <p class="location">${property['Location']}</p>
+                <p class="price">₹${property['Price']}</p>
                 <p><strong>BHK:</strong> ${property['BHK']} BHK</p>
-                <p><strong>Gym Available:</strong> ${gymAvailable}</p>
-                <p><strong>Swimming Pool Available:</strong> ${poolAvailable}</p>
                 <p><strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} / month</p>
                 <p><strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)} ⭐</p>
+                <div class="amenities">
+                  <span class="amenity">Gym: ${gymAvailable}</span>
+                  <span class="amenity">Pool: ${poolAvailable}</span>
+                </div>
               </div>`;
           });
 
-          propertiesHtml += '</div>';
+          propertiesHtml += `</div>`;
           resultContainer.innerHTML = propertiesHtml;
 
         } else {
@@ -1459,4 +1445,92 @@ document.addEventListener('DOMContentLoaded', function () {
         resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
       });
   });
+
+  // ---------- Mortgage Calculator ----------
+  const propertyValueInput = document.querySelector("#loan-amount-input");
+  const downPaymentInput = document.querySelector("#down-payment-input");
+  const interestRateInput = document.querySelector("#interest-rate-input");
+  const loanTermInput = document.querySelector("#loan-term-input");
+
+  const propertyValueSlider = document.querySelector("#loan-amount-slider");
+  const downPaymentSlider = document.querySelector("#down-payment-slider");
+  const interestRateSlider = document.querySelector("#interest-rate-slider");
+  const loanTermSlider = document.querySelector("#loan-term-slider");
+
+  const principalAmountEl = document.querySelector("#principal-amount");
+  const principalDetailEl = document.querySelector("#principal-detail");
+  const monthlyPaymentEl = document.querySelector("#monthly-payment");
+  const totalPaymentEl = document.querySelector("#total-payment");
+  const totalInterestEl = document.querySelector("#total-interest");
+
+  const chartPrincipalBar = document.querySelector("#mortgage-chart-principal");
+  const chartInterestBar = document.querySelector("#mortgage-chart-interest");
+
+  function formatINR(num) {
+    return "₹" + num.toLocaleString("en-IN");
+  }
+
+  function syncInput(slider, input) {
+    slider.addEventListener("input", () => {
+      input.value = parseInt(slider.value).toLocaleString("en-IN");
+      calculateMortgage();
+    });
+
+    input.addEventListener("input", () => {
+      const numericValue = parseInt(input.value.replace(/,/g, '')) || 0;
+      slider.value = numericValue;
+      input.value = numericValue.toLocaleString("en-IN");
+      calculateMortgage();
+    });
+  }
+
+  function syncFloatInput(slider, input) {
+    slider.addEventListener("input", () => {
+      input.value = slider.value;
+      calculateMortgage();
+    });
+
+    input.addEventListener("input", () => {
+      const value = parseFloat(input.value) || 0;
+      slider.value = value;
+      calculateMortgage();
+    });
+  }
+
+  function calculateMortgage() {
+    const propertyValue = parseInt(propertyValueInput.value.replace(/,/g, '')) || 0;
+    const downPayment = parseInt(downPaymentInput.value.replace(/,/g, '')) || 0;
+    const interestRate = parseFloat(interestRateInput.value) || 0;
+    const loanTerm = parseInt(loanTermInput.value) || 0;
+
+    const loanAmount = propertyValue - downPayment;
+    const monthlyInterestRate = interestRate / 12 / 100;
+    const totalMonths = loanTerm * 12;
+
+    const monthlyPayment = loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, totalMonths) /
+      (Math.pow(1 + monthlyInterestRate, totalMonths) - 1);
+
+    const totalPayment = monthlyPayment * totalMonths;
+    const totalInterest = totalPayment - loanAmount;
+
+    principalAmountEl.textContent = formatINR(loanAmount);
+    principalDetailEl.textContent = `Property Value: ${formatINR(propertyValue)} - Down Payment: ${formatINR(downPayment)}`;
+    monthlyPaymentEl.textContent = formatINR(Math.round(monthlyPayment));
+    totalPaymentEl.textContent = formatINR(Math.round(totalPayment));
+    totalInterestEl.textContent = formatINR(Math.round(totalInterest));
+
+    const principalPercent = (loanAmount / totalPayment) * 100;
+    const interestPercent = (totalInterest / totalPayment) * 100;
+
+    chartPrincipalBar.style.width = `${principalPercent}%`;
+    chartInterestBar.style.width = `${interestPercent}%`;
+  }
+
+  // Hook up sliders and inputs
+  syncInput(propertyValueSlider, propertyValueInput);
+  syncInput(downPaymentSlider, downPaymentInput);
+  syncFloatInput(interestRateSlider, interestRateInput);
+  syncInput(loanTermSlider, loanTermInput);
+
+  calculateMortgage();
 });
