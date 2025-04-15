@@ -494,7 +494,7 @@ function initPropertySearch() {
     };
     console.log("Sending payload:", payload);
 
-    fetch("http://127.0.0.1:8000/predict", {
+    fetch("https://housing-backend-4lag.onrender.com/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
