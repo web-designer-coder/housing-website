@@ -2534,10 +2534,10 @@ body {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  max-width: 100%;
+  grid-template-columns: repeat(1, 1fr); /* default: 1 card on small screens */
   gap: 1rem;
   width: 100%;
+  max-width: 100%;
 }
 
 .card-grid-wrapper {
@@ -2549,24 +2549,28 @@ body {
   overflow-x: hidden;
 }
 
-
-#ai-prediction-result {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
+/* 2 cards on medium screens (min 640px) */
+@media (min-width: 640px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-form {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
+/* 3 cards on larger tablets (min 768px) */
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
+/* Max 4 cards on desktops and above (min 1024px) */
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+
+
+
 
