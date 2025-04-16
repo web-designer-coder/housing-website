@@ -2532,35 +2532,14 @@ body {
   cursor: pointer;
 }
 
-/* Ensuring full width for the card grid wrapper */
-.card-grid-wrapper {
-  width: 100%;  /* Occupy the full width of the container */
-  padding: 1rem 2rem; /* Add some padding to the sides */
-  box-sizing: border-box; /* Make sure padding is included in the width */
-}
-
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Flexibly adjust cards based on screen width */
-  gap: 1rem; /* Add spacing between cards */
-  justify-items: center; /* Center each card inside its grid cell */
-}
-
-/* Responsive grid setup */
-@media (min-width: 640px) {
-  .card-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 cards per row for small screens */
-  }
+  grid-template-columns: 1fr; /* default: 1 card per row */
+  gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .card-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 cards per row for medium screens */
-  }
-}
-
-@media (min-width: 1024px) {
-  .card-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 cards per row for larger screens */
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row for tablets and up */
   }
 }
