@@ -2532,14 +2532,24 @@ body {
   cursor: pointer;
 }
 
+.card-grid-wrapper {
+  width: 100%;
+  max-width: none;
+  padding: 0 1rem; /* optional */
+}
+
 .card-grid {
   display: grid;
-  grid-template-columns: 1fr; /* default: 1 card per row */
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .card-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 cards per row for tablets and up */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
+
+
+
+
