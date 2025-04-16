@@ -2559,10 +2559,9 @@ body {
 }
 
 .card-grid-wrapper {
-  width: 100%;
-  padding: 0;
-  margin: 0;
+  padding: 0 1rem; /* or 2rem for more spacing */
 }
+
 #ai-prediction-result {
   margin-top: 1.5rem;
 }
