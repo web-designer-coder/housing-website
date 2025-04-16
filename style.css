@@ -1,3 +1,9 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* Base Styles */
 :root {
   --primary: #3b82f6;
@@ -2526,14 +2532,35 @@ body {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Adjust the grid to automatically fill the available space */
+  gap: 1rem; /* Space between cards */
+  margin-top: 1rem; /* Add margin at the top of the grid */
+  width: 100%; /* Ensure the grid takes up 100% of its container's width */
 }
 
 @media (max-width: 768px) {
   .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust columns for smaller screens */
   }
 }
 
+
+.property-list-container { /* Assuming the class for the parent container of the grid */
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.property-card {
+  width: 100%; /* Allow the cards to fill their grid columns */
+  box-sizing: border-box; /* Ensure padding/margins don't affect width calculation */
+}
+
+.card-grid-wrapper {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+#ai-prediction-result {
+  margin-top: 1.5rem;
+}
