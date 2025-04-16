@@ -1413,13 +1413,12 @@ document.addEventListener('DOMContentLoaded', function () {
               Matching Properties:
             </div>
             <div class="card-grid-wrapper">
-              <div class="card-grid">
-          `;
-  
+              <div class="card-grid">`;
+      
           data.properties.forEach(property => {
             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
-  
+      
             propertiesHtml += `
               <div class="property-card">
                 <h3>${property['Society Name']}</h3>
@@ -1436,18 +1435,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
               </div>`;
           });
-  
+      
           propertiesHtml += `
               </div>
             </div>
           `;
-  
+      
           resultContainer.innerHTML = propertiesHtml;
-  
+      
         } else {
           resultContainer.innerHTML = `<div style="color: red;">❌ No matching properties found. Please try again with different parameters.</div>`;
         }
       })
+      
       .catch(error => {
         console.error('Error:', error);
         resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
