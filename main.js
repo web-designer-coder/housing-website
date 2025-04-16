@@ -1361,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('ai-form');
   const resultContainer = document.createElement('div');
   resultContainer.id = 'ai-prediction-result';
-  resultContainer.style.marginTop = '1.5rem';
+  // resultContainer.style.marginTop = '1.5rem';
   form.appendChild(resultContainer);
 
   form.addEventListener('submit', function (e) {
@@ -1412,12 +1412,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div style="background-color: var(--header-bg, #f0f9ff); padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; font-weight: bold;">
               Matching Properties:
             </div>
-            <div class="card-grid" style="
-              display: grid;
-              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-              gap: 1rem;
-              margin-top: 1rem;
-            ">
+            <div class="card-grid">
           `;
 
           data.properties.forEach(property => {
