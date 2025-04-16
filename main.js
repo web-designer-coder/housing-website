@@ -1410,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.properties && data.properties.length > 0) {
           let propertiesHtml = `
             <div style="background-color: var(--header-bg, #f0f9ff); padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; font-weight: bold;">
-              Matching Properties:
+              Predicted Properties in <p> ${property['Location']}</p>
             </div>
             <div class="card-grid">
           `;
