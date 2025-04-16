@@ -2532,43 +2532,37 @@ body {
   cursor: pointer;
 }
 
+/* Ensuring full width for the card grid wrapper */
 .card-grid-wrapper {
-  width: 100%;
-  max-width: 100%;
-  padding: 1rem 2rem;
-  background-color: #f9f9f9;
+  width: 100%;  /* Occupy the full width of the container */
+  padding: 1rem 2rem; /* Add some padding to the sides */
+  box-sizing: border-box; /* Make sure padding is included in the width */
 }
 
 .card-grid {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Ensure cards are evenly spaced */
-  width: 100%;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Flexibly adjust cards based on screen width */
+  gap: 1rem; /* Add spacing between cards */
+  width: 100%;  /* Ensure it occupies full width */
+  justify-items: center; /* Center each card inside its grid cell */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
-/* Responsive layout for 2, 3, and 4 cards */
+/* Responsive grid setup */
 @media (min-width: 640px) {
   .card-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 cards for small screens */
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row for small screens */
   }
 }
 
 @media (min-width: 768px) {
   .card-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 cards for medium screens */
+    grid-template-columns: repeat(3, 1fr); /* 3 cards per row for medium screens */
   }
 }
 
 @media (min-width: 1024px) {
   .card-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 cards max for large screens */
+    grid-template-columns: repeat(4, 1fr); /* 4 cards per row for larger screens */
   }
 }
-
-
-
-
-
-
-
