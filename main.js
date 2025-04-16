@@ -1429,6 +1429,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p><strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)} ⭐</p>
                 <div class="amenities">
                   <span class="amenity">Gym: ${gymAvailable}</span>
+                </div>
+                <div class="amenities">
                   <span class="amenity">Pool: ${poolAvailable}</span>
                 </div>
               </div>`;
