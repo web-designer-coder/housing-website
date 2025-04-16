@@ -68,8 +68,8 @@
       </div>
     </div>
   </header>
-
-  <main>
+  
+<main>
     <!-- Hero Section -->
     <section class="hero-section" id="home">
       <div class="hero-overlay"></div>
@@ -84,12 +84,11 @@
       </div>
     </section>
 
-    <!-- Property Search Section -->
     <section id="property-predict-form" class="section">
-        <div class="container">
+      <div class="container">
         <h2 class="section-title">AI Property Prediction</h2>
+    
         <form id="ai-form" class="ai-form">
-        
           <!-- BHK -->
           <div class="form-group">
             <label for="bhk">BHK</label>
@@ -145,9 +144,15 @@
           </div>
         </form>
     
-        <!-- Spinner and Results -->
+        <!-- Spinner -->
         <div id="search-loading" class="hidden">Loading prediction...</div>
-        <div id="search-results"></div>
+    
+        <!-- Card Results Grid -->
+        <div class="card-grid-wrapper">
+          <div class="card-grid" id="search-results">
+            <!-- Cards will be dynamically added here -->
+          </div>
+        </div>
     
         <!-- Modal -->
         <div id="prediction-modal" class="modal hidden">
@@ -157,8 +162,8 @@
             <p id="prediction-text">Loading...</p>
           </div>
         </div>
-      </div>
-  </section>
+      </div> <!-- closes container -->
+    </section>    
     
 
     <!-- Mortgage Calculator Section -->
