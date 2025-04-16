@@ -1412,14 +1412,20 @@ document.addEventListener('DOMContentLoaded', function () {
             <div style="background-color: var(--header-bg, #f0f9ff); padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; font-weight: bold;">
               Matching Properties:
             </div>
-            <div class="card-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">`;
+            <div class="card-grid" style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+              gap: 1rem;
+              margin-top: 1rem;
+            ">
+          `;
 
           data.properties.forEach(property => {
             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
 
             propertiesHtml += `
-              <div class="property-card" style="flex: 1 1 calc(33.333% - 1rem);">
+              <div class="property-card">
                 <h3>${property['Society Name']}</h3>
                 <p class="location">${property['Location']}</p>
                 <p class="price">₹${property['Price']}</p>
