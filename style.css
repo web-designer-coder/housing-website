@@ -2539,29 +2539,25 @@ body {
   width: 100%;
 }
 
-@media (max-width: 768px) {
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
-
-
-
-.property-list-container { /* Assuming the class for the parent container of the grid */
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.property-card {
-  width: 100%; /* Allow the cards to fill their grid columns */
-  box-sizing: border-box; /* Ensure padding/margins don't affect width calculation */
-}
-
 .card-grid-wrapper {
-  padding: 0 1rem; /* or 2rem for more spacing */
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 1rem 2rem;
+  background-color: #f9f9f9; /* Moved inside to avoid duplicate selector */
 }
 
 #ai-prediction-result {
-  margin-top: 1.5rem;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
+
+form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
