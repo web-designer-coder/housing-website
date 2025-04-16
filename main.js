@@ -1366,17 +1366,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-
+  
     resultContainer.innerHTML = '<div style="color: #3b82f6;">⏳ Fetching results...</div>';
-
+  
     const rawBhk = document.getElementById("bhk").value;
     const bhkValue = parseInt(rawBhk);
-
+  
     if (isNaN(bhkValue) || bhkValue < 1 || bhkValue > 5) {
       resultContainer.innerHTML = `<div style="color: red;">❌ Please select a valid BHK value (1–5).</div>`;
       return;
     }
-
+  
     const payload = {
       bhk: bhkValue,
       location: document.getElementById("location").value.trim(),
@@ -1384,17 +1384,17 @@ document.addEventListener('DOMContentLoaded', function () {
       gym: document.getElementById("gym").value,
       pool: document.getElementById("pool").value
     };
-
+  
     if (!["Yes", "No"].includes(payload.gym)) {
       resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'Yes' or 'No' for Gym.</div>`;
       return;
     }
-
+  
     if (!["Yes", "No"].includes(payload.pool)) {
       resultContainer.innerHTML = `<div style="color: red;">❌ Please choose 'Yes' or 'No' for Pool.</div>`;
       return;
     }
-
+  
     fetch("https://housing-backend-4lag.onrender.com/predict", {
       method: 'POST',
       headers: {
@@ -1410,15 +1410,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.properties && data.properties.length > 0) {
           let propertiesHtml = `
             <div style="background-color: var(--header-bg, #f0f9ff); padding: 1rem; border-radius: 0.5rem; border: 1px solid #3b82f6; color: #2563eb; text-align: center; font-weight: bold;">
-              Predicted Properties
+              Matching Properties:
             </div>
-            <div class="card-grid">
+            <div class="card-grid-wrapper">
+              <div class="card-grid">
           `;
-
+  
           data.properties.forEach(property => {
             const gymAvailable = property['Gym Available'] === "Yes" ? 'Yes' : 'No';
             const poolAvailable = property['Swimming Pool Available'] === "Yes" ? 'Yes' : 'No';
-
+  
             propertiesHtml += `
               <div class="property-card">
                 <h3>${property['Society Name']}</h3>
@@ -1435,10 +1436,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
               </div>`;
           });
-
-          propertiesHtml += `</div>`;
+  
+          propertiesHtml += `
+              </div>
+            </div>
+          `;
+  
           resultContainer.innerHTML = propertiesHtml;
-
+  
         } else {
           resultContainer.innerHTML = `<div style="color: red;">❌ No matching properties found. Please try again with different parameters.</div>`;
         }
@@ -1448,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', function () {
         resultContainer.innerHTML = `<div style="color: red;">❌ Prediction failed. Please try again later.</div>`;
       });
   });
-
+  
   // ---------- Mortgage Calculator ----------
   const propertyValueInput = document.querySelector("#loan-amount-input");
   const downPaymentInput = document.querySelector("#down-payment-input");
