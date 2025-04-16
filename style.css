@@ -2532,44 +2532,41 @@ body {
   cursor: pointer;
 }
 
+.card-grid-wrapper {
+  width: 100%;
+  max-width: 1200px; /* or any value you like */
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  background-color: #f9f9f9;
+}
+
 .card-grid {
   display: grid;
   gap: 1rem;
-  width: 100%;
+  grid-template-columns: repeat(1, 1fr); /* default 1 column */
 }
 
-/* Default: 1 card */
-.card-grid {
-  grid-template-columns: repeat(1, 1fr);
-}
-
-/* Small: 2 cards */
+/* 2 cards for small screens */
 @media (min-width: 640px) {
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Medium: 3 cards */
+/* 3 cards for medium */
 @media (min-width: 768px) {
   .card-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* Large and above: 4 cards max */
+/* 4 cards max for large screens */
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-.card-grid-wrapper {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-}
 
 
 
