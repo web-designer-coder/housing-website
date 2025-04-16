@@ -1424,7 +1424,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <h3>${property['Society Name']}</h3>
                 <p class="location">${property['Location']}</p>
                 <p class="price">₹${property['Price']}</p>
-                <p><strong>BHK:</strong> ${property['BHK']} BHK</p>
+                <p><strong>BHK:</strong> ${property['BHK']}</p>
                 <p><strong>Estimated Rent:</strong> ₹${property['Estimated Rent']} / month</p>
                 <p><strong>Star Rating:</strong> ${parseFloat(property['Star Rating']).toFixed(1)} ⭐</p>
                 <div class="amenities">
