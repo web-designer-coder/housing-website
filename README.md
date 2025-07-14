@@ -1,7 +1,7 @@
 
 # 🏡 Property Prices Prediction
 
-This project is a web-based frontend integrated with a Python backend API that predicts property prices based on user input and housing data. The application offers a clean, user-friendly interface to input housing features and receive predictions instantly.
+This project is a web-based frontend integrated with a Python backend API that predicts property prices in major cities in India based on user input and housing data. The application offers a clean, user-friendly interface to input housing features and receive predictions instantly.
 
 ---
 ## 📊 Dataset Used
@@ -42,37 +42,6 @@ housing-website-main/
 │
 ├── README.md                # Project documentation
 └── .gitignore               # Files to ignore in version control
-```
-
----
-
-## 🛠️ How to Run
-
-### Frontend
-No dependencies are required. Simply open `index.html` in your browser.
-
-### Backend
-
-1. **Set up a virtual environment** (optional but recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   pip install flask pandas scikit-learn
-   ```
-
-3. **Run the Flask server**:
-   ```bash
-   cd api
-   python main.py
-   ```
-
-4. **Access the app**:
-   - Open `index.html` in your browser.
-   - The frontend will send requests to the local Flask server.
 
 ---
 
@@ -91,16 +60,6 @@ No dependencies are required. Simply open `index.html` in your browser.
 }
 ```
 
----
-
-## 📦 Requirements
-
-- Python 3.8+
-- Flask
-- Pandas
-- scikit-learn
-
----
 
 ## 🤝 Contributing
 
